@@ -1,0 +1,41 @@
+﻿<Window x:Class="Lab1.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="300">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Дата народження:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <DatePicker SelectedDate="{Binding BirthDate}"/>
+        </StackPanel>
+
+        <Button Grid.Row="1" 
+                Content="Розрахувати" 
+                Command="{Binding CalculateCommand}"
+                Width="100" 
+                HorizontalAlignment="Left" 
+                Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="2" 
+                   Text="{Binding Age}" 
+                   Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="3" 
+                   Text="{Binding WesternZodiac}" 
+                   Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="4" 
+                   Text="{Binding ChineseZodiac}"/>
+    </Grid>
+
+</Window>
