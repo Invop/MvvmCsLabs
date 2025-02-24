@@ -7,19 +7,13 @@ namespace Lab4.Models;
 public class Person
 {
     [Key] public int Id { get; init; }
-    private readonly string _firstName;
-    private readonly string _lastName;
-    private readonly string _email;
-    private readonly DateTime _birthDate;
-
-    public string FirstName => _firstName;
-    public string LastName => _lastName;
-    public string Email => _email;
-    public DateTime BirthDate => _birthDate;
-
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public DateTime BirthDate { get; set; }
     public bool IsAdult => CalculateIsAdult();
-    public string SunSign => Zodiac.GetWesternZodiac(_birthDate);
-    public string ChineseSign => Zodiac.GetChineseZodiac(_birthDate);
+    public string SunSign => Zodiac.GetWesternZodiac(BirthDate);
+    public string ChineseSign => Zodiac.GetChineseZodiac(BirthDate);
     public bool IsBirthday => CalculateIsBirthday();
 
     public Person()
@@ -28,10 +22,10 @@ public class Person
 
     public Person(string firstName, string lastName, string email, DateTime birthDate)
     {
-        _firstName = firstName;
-        _lastName = lastName;
-        _email = email;
-        _birthDate = birthDate;
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        BirthDate = birthDate;
     }
 
     public Person(string firstName, string lastName, string email)
@@ -47,8 +41,8 @@ public class Person
     private bool CalculateIsAdult()
     {
         var today = DateTime.Today;
-        var age = today.Year - _birthDate.Year;
-        if (_birthDate.Date > today.AddYears(-age))
+        var age = today.Year - BirthDate.Year;
+        if (BirthDate.Date > today.AddYears(-age))
             age--;
         return age >= 18;
     }
@@ -56,6 +50,6 @@ public class Person
     private bool CalculateIsBirthday()
     {
         var today = DateTime.Today;
-        return _birthDate.Month == today.Month && _birthDate.Day == today.Day;
+        return BirthDate.Month == today.Month && BirthDate.Day == today.Day;
     }
 }
