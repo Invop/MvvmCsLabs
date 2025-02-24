@@ -16,7 +16,8 @@ public class AppDbContext : DbContext
     {
         modelBuilder.Entity<Person>(entity =>
         {
-            entity.HasKey(e => e.Email);
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired();
             entity.Property(e => e.FirstName).IsRequired();
             entity.Property(e => e.LastName).IsRequired();
             entity.Property(e => e.BirthDate).IsRequired();

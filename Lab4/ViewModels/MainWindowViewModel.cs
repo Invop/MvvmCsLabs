@@ -1,102 +1,52 @@
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Lab4.Exceptions;
+using Lab4.Data;
 using Lab4.Models;
+using System.Collections.ObjectModel;
 
 namespace Lab4.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    [ObservableProperty] private string _firstName = string.Empty;
+    public ObservableCollection<Person> People { get; set; }
+    public ObservableCollection<Person> FilteredPeople { get; set; }
+    [ObservableProperty] private Person? _selectedPerson;
+    [ObservableProperty] private string _nameFilter = string.Empty;
+    [ObservableProperty] private string _lastNameFilter = string.Empty;
+    [ObservableProperty] private string _emailFilter = string.Empty;
+    [ObservableProperty] private int? _yearOfBirthFilter = null;
 
-    [ObservableProperty] private string _lastName = string.Empty;
+    private readonly AppDbContext _db = new();
 
-    [ObservableProperty] private string _email = string.Empty;
-
-    [ObservableProperty] private DateTime? _birthDate;
-
-    [ObservableProperty] private Person? _person;
-
-    [ObservableProperty] private bool _canProceed;
-    [ObservableProperty] private bool _isProcessing;
-
-    partial void OnFirstNameChanged(string value)
+    public MainWindowViewModel()
     {
-        UpdateCanProceed();
+        People = new ObservableCollection<Person>(GetUsers());
+        FilteredPeople = new ObservableCollection<Person>(People);
+        PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(NameFilter) or nameof(LastNameFilter)
+                or nameof(EmailFilter) or nameof(YearOfBirthFilter))
+                ApplyFilters();
+        };
     }
 
-    partial void OnLastNameChanged(string value)
+    private void ApplyFilters()
     {
-        UpdateCanProceed();
+        var filteredResults = People.Where(person =>
+            (string.IsNullOrEmpty(NameFilter) ||
+             person.FirstName.Contains(NameFilter, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(LastNameFilter) ||
+             person.LastName.Contains(LastNameFilter, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(EmailFilter) ||
+             person.Email.Contains(EmailFilter, StringComparison.OrdinalIgnoreCase)) &&
+            (!YearOfBirthFilter.HasValue || person.BirthDate.Year == YearOfBirthFilter)
+        ).ToList();
+
+        FilteredPeople.Clear();
+        foreach (var person in filteredResults) FilteredPeople.Add(person);
     }
 
-    partial void OnEmailChanged(string value)
+    public List<Person> GetUsers()
     {
-        UpdateCanProceed();
-    }
-
-    partial void OnBirthDateChanged(DateTime? value)
-    {
-        UpdateCanProceed();
-    }
-
-    private void UpdateCanProceed()
-    {
-        CanProceed = !string.IsNullOrWhiteSpace(FirstName) &&
-                     !string.IsNullOrWhiteSpace(LastName) &&
-                     !string.IsNullOrWhiteSpace(Email) &&
-                     BirthDate.HasValue;
-    }
-
-    [RelayCommand]
-    private async Task ProceedAsync()
-    {
-        try
-        {
-            IsProcessing = true;
-            if (!Shared.RegexUtilities.IsValidEmail(Email)) throw new InvalidEmailException();
-
-            if (!BirthDate.HasValue)
-                return;
-
-            await ValidateBirthDateAsync(BirthDate.Value);
-            Person = new Person(FirstName, LastName, Email, BirthDate.Value);
-        }
-        catch (FutureBirthDateException ex)
-        {
-            MessageBox.Show(ex.Message, "Помилка дати", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        catch (PastBirthDateException ex)
-        {
-            MessageBox.Show(ex.Message, "Помилка дати", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        catch (InvalidEmailException ex)
-        {
-            MessageBox.Show(ex.Message, "Помилка email", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        finally
-        {
-            IsProcessing = false;
-        }
-    }
-
-    private static Task ValidateBirthDateAsync(DateTime birthDate)
-    {
-        return Task.Run(() =>
-        {
-            var today = DateTime.Today;
-            var age = today.Year - birthDate.Year;
-            if (birthDate.Date > today.AddYears(-age))
-                age--;
-
-            switch (age)
-            {
-                case < 0:
-                    throw new FutureBirthDateException();
-                case > 135:
-                    throw new PastBirthDateException();
-            }
-        });
+        return _db.People.ToList();
     }
 }

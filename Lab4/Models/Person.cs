@@ -1,28 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using Shared;
 
 namespace Lab4.Models;
 
 public class Person
 {
+    [Key] public int Id { get; init; }
     private readonly string _firstName;
     private readonly string _lastName;
     private readonly string _email;
     private readonly DateTime _birthDate;
-
-    private readonly bool _isAdult;
-    private readonly string _sunSign;
-    private readonly string _chineseSign;
-    private readonly bool _isBirthday;
 
     public string FirstName => _firstName;
     public string LastName => _lastName;
     public string Email => _email;
     public DateTime BirthDate => _birthDate;
 
-    public bool IsAdult => _isAdult;
-    public string SunSign => _sunSign;
-    public string ChineseSign => _chineseSign;
-    public bool IsBirthday => _isBirthday;
+    public bool IsAdult => CalculateIsAdult();
+    public string SunSign => Zodiac.GetWesternZodiac(_birthDate);
+    public string ChineseSign => Zodiac.GetChineseZodiac(_birthDate);
+    public bool IsBirthday => CalculateIsBirthday();
 
     public Person()
     {
@@ -34,11 +32,6 @@ public class Person
         _lastName = lastName;
         _email = email;
         _birthDate = birthDate;
-
-        _isAdult = CalculateIsAdult();
-        _sunSign = Zodiac.GetWesternZodiac(birthDate);
-        _chineseSign = Zodiac.GetChineseZodiac(birthDate);
-        _isBirthday = CalculateIsBirthday();
     }
 
     public Person(string firstName, string lastName, string email)
