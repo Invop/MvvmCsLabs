@@ -44,7 +44,7 @@ public class RegexUtilities
         }
     }
 
-    public static ValidationResult ValidateEmail(string email)
+    public static ValidationResult? ValidateEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
             return new ValidationResult("Email cannot be empty");
