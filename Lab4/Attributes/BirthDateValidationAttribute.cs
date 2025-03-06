@@ -10,14 +10,14 @@ public class BirthDateValidationAttribute : ValidationAttribute
         if (value is not DateTime birthDate) return new ValidationResult("Birth date is required");
 
         var today = DateTime.Today;
-
-        if (birthDate > today) return new ValidationResult("Birth date cannot be in the future");
-
-        var maxAge = 135;
-        var minDate = today.AddYears(-maxAge);
-
-        if (birthDate < minDate) return new ValidationResult($"Person cannot be older than {maxAge} years");
-
-        return ValidationResult.Success;
+        var age = today.Year - birthDate.Year;
+        if (birthDate.Date > today.AddYears(-age))
+            age--;
+        return age switch
+        {
+            < 0 => new ValidationResult("Дата народження не може бути в майбутньому"),
+            > 135 => new ValidationResult("Вік не може бути більше 135 років"),
+            _ => ValidationResult.Success
+        };
     }
 }

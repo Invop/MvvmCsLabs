@@ -53,7 +53,9 @@
             </StackPanel>
             <StackPanel Margin="0,0,10,0">
                 <TextBlock Text="Year of Birth" Margin="0,0,0,2" />
-                <TextBox Width="120" Text="{Binding YearOfBirthFilter, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Width="120"
+                         Text="{Binding YearOfBirthFilter,Converter={StaticResource NullableIntConverter},
+                         UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </StackPanel>
 

@@ -7,6 +7,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <converters:NullableIntConverter x:Key="NullableIntConverter" />
 
     </Application.Resources>
 </Application>
