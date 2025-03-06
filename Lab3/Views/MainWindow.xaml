@@ -27,7 +27,6 @@
 
             <Button Content="Обробити"
                     Command="{Binding ProceedCommand}"
-                    IsEnabled="{Binding CanProceed}"
                     Margin="0,20,0,0"
                     Width="100"
                     HorizontalAlignment="Left" />

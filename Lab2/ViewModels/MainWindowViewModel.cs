@@ -7,48 +7,24 @@ namespace Lab2.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    [ObservableProperty] private string _firstName = string.Empty;
-
-    [ObservableProperty] private string _lastName = string.Empty;
-
-    [ObservableProperty] private string _email = string.Empty;
-
-    [ObservableProperty] private DateTime? _birthDate;
+    [ObservableProperty] private string _firstName = "John";
+    [ObservableProperty] private string _lastName = "Doe";
+    [ObservableProperty] private string _email = "example@example.com";
+    [ObservableProperty] private DateTime? _birthDate = DateTime.Today;
 
     [ObservableProperty] private Person? _person;
 
-    [ObservableProperty] private bool _canProceed;
-    [ObservableProperty] private bool _isProcessing;
+    [ObservableProperty] private bool _isProcessing = false;
 
-    partial void OnFirstNameChanged(string value)
+    private bool CanExecute()
     {
-        UpdateCanProceed();
+        return !string.IsNullOrWhiteSpace(FirstName) &&
+               !string.IsNullOrWhiteSpace(LastName) &&
+               !string.IsNullOrWhiteSpace(Email) &&
+               BirthDate.HasValue;
     }
 
-    partial void OnLastNameChanged(string value)
-    {
-        UpdateCanProceed();
-    }
-
-    partial void OnEmailChanged(string value)
-    {
-        UpdateCanProceed();
-    }
-
-    partial void OnBirthDateChanged(DateTime? value)
-    {
-        UpdateCanProceed();
-    }
-
-    private void UpdateCanProceed()
-    {
-        CanProceed = !string.IsNullOrWhiteSpace(FirstName) &&
-                     !string.IsNullOrWhiteSpace(LastName) &&
-                     !string.IsNullOrWhiteSpace(Email) &&
-                     BirthDate.HasValue;
-    }
-
-    [RelayCommand]
+    [RelayCommand(CanExecute = "CanExecute")]
     private async Task ProceedAsync()
     {
         try
